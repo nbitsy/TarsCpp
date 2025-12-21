@@ -591,13 +591,13 @@ string Tars2Cpp::tostrBuiltin(const BuiltinPtr& pPtr) const
     case Builtin::KindShort:
         //为了兼容java无unsigned, 编解码时把tars文件中 unsigned char 对应到short
         //c++中需要还原回来
-        s = (pPtr->isUnsigned() ? _namespace + "::UInt8" : _namespace + "::Short");
+        s = (pPtr->isUnsigned() ? _namespace + "::UInt16" : _namespace + "::Short");
         break;
     case Builtin::KindInt:
-        s = (pPtr->isUnsigned() ? _namespace + "::UInt16" : _namespace + "::Int32");
+        s = (pPtr->isUnsigned() ? _namespace + "::UInt32" : _namespace + "::Int32");
         break;
     case Builtin::KindLong:
-        s =  (pPtr->isUnsigned() ? _namespace + "::" + "UInt32" : _namespace + "::Int64");
+        s =  (pPtr->isUnsigned() ? _namespace + "::" + "UInt64" : _namespace + "::Int64");
         break;
     case Builtin::KindFloat:
         s = _namespace + "::Float";
