@@ -132,6 +132,20 @@ public:
         }
     }
 
+    static void readXml(UInt64& n, const XmlValuePtr & p, bool isRequire = true)
+    {
+        if(NULL != p.get() && p->getType() == eXmlTypeString)
+        {
+            n = TC_Common::strto<UInt64>(XmlValueStringPtr::dynamicCast(p)->value);
+        }
+        else if (isRequire)
+        {
+            char s[128];
+            snprintf(s, sizeof(s), "read 'UInt64' type mismatch, get type: %d.", (p.get() ? p->getType() : 0));
+            throw TC_Xml_Exception(s);
+        }
+    }
+
     static void readXml(Float& n, const XmlValuePtr & p, bool isRequire = true)
     {
         if(NULL != p.get() && p->getType() == eXmlTypeString)
@@ -412,6 +426,30 @@ public:
     }
 
     template<typename V, typename Cmp, typename Alloc>
+    static void readXml(std::map<UInt64, V, Cmp, Alloc>& m, const XmlValuePtr & p, bool isRequire = true)
+    {
+        if(NULL != p.get() && p->getType() == eXmlTypeObj)
+        {
+            XmlValueObjPtr pObj=XmlValueObjPtr::dynamicCast(p);
+            map<string,XmlValuePtr>::iterator iter;
+            iter=pObj->value.begin();
+            for(;iter!=pObj->value.end();++iter)
+            {
+                std::pair<UInt64, V> pr;
+                pr.first=TC_Common::strto<UInt64>(iter->first);
+                readXml(pr.second,iter->second);
+                m.insert(pr);
+            }
+        }
+        else if (isRequire)
+        {
+            char s[128];
+            snprintf(s, sizeof(s), "read 'map' type mismatch, get type: %d.", (p.get() ? p->getType() : 0));
+            throw TC_Xml_Exception(s);
+        }
+    }
+
+    template<typename V, typename Cmp, typename Alloc>
     static void readXml(std::map<Float, V, Cmp, Alloc>& m, const XmlValuePtr & p, bool isRequire = true)
     {
         if(NULL != p.get() && p->getType() == eXmlTypeObj)
@@ -583,6 +621,11 @@ public:
         return (new XmlValueString(TC_Common::tostr(n), cdata));
     }
 
+    static XmlValueStringPtr writeXml(UInt64 n, bool cdata = false)
+    {
+        return (new XmlValueString(TC_Common::tostr(n), cdata));
+    }
+
     static XmlValueStringPtr writeXml(Float n, bool cdata = false)
     {
         return (new XmlValueString(TC_Common::tostr(n), cdata));
@@ -701,6 +744,18 @@ public:
     {
         XmlValueObjPtr pObj=new XmlValueObj();
         typedef typename std::map<Int64, V, Cmp, Alloc>::const_iterator IT;
+        for (IT i = m.begin(); i != m.end(); ++i)
+        {
+            pObj->value[TC_Common::tostr(i->first)]=writeXml(i->second);
+        }
+        return pObj;
+    }
+
+    template<typename V, typename Cmp, typename Alloc>
+    static XmlValueObjPtr writeXml(const std::map<UInt64, V, Cmp, Alloc>& m)
+    {
+        XmlValueObjPtr pObj=new XmlValueObj();
+        typedef typename std::map<UInt64, V, Cmp, Alloc>::const_iterator IT;
         for (IT i = m.begin(); i != m.end(); ++i)
         {
             pObj->value[TC_Common::tostr(i->first)]=writeXml(i->second);

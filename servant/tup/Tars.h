@@ -145,6 +145,13 @@ do { \
     (osLen) += sizeof(Double); \
 } while(0)
 
+#define TarsWriteUInt64TTypeBuf(os, val, osLen) \
+do { \
+    TarsReserveBuf(os, (osLen)+sizeof(uint64_t)); \
+    (*(uint64_t *)((os)._buf + (osLen))) = (val); \
+    (osLen) += sizeof(uint64_t); \
+} while(0)
+
 #define TarsWriteUInt32TTypeBuf(os, val, osLen) \
 do { \
     TarsReserveBuf(os, (osLen)+sizeof(uint32_t)); \
@@ -171,6 +178,13 @@ do { \
     TarsReserveBuf(os, (osLen)+sizeof(Short)); \
     (*(Short *)((os)._buf + (osLen))) = (val); \
     (osLen) += sizeof(Short); \
+} while(0)
+
+#define TarsWriteUShortTypeBuf(os, val, osLen) \
+do { \
+    TarsReserveBuf(os, (osLen)+sizeof(unsigned short)); \
+    (*(unsigned short *)((os)._buf + (osLen))) = (val); \
+    (osLen) += sizeof(unsigned short); \
 } while(0)
 
 #define TarsWriteTypeBuf(os, buf, len) \
@@ -1256,6 +1270,51 @@ public:
 		}
 	}
 
+	void read(UInt64& n, uint8_t tag, bool isRequire = true)
+	{
+		uint8_t headType = 0, headTag = 0;
+		bool skipFlag = false;
+		TarsSkipToTag(skipFlag, tag, headType, headTag);
+		if (tars_likely(skipFlag))
+		{
+			switch(headType)
+			{
+				case TarsHeadeZeroTag:
+					n = 0;
+					break;
+				case TarsHeadeChar:
+					TarsReadTypeBuf(*this, n, Char);
+					n = (UInt8) n;
+					break;
+				case TarsHeadeShort:
+					TarsReadTypeBuf(*this, n, Short);
+					n = (UInt16) ntohs(n);
+					break;
+				case TarsHeadeInt32:
+					TarsReadTypeBuf(*this, n, Int32);
+					n = (UInt32) ntohl(n);
+					break;
+				case TarsHeadeInt64:
+					TarsReadTypeBuf(*this, n, Int64);
+					n = (UInt64) tars_ntohll(n);
+					break;
+				default:
+				{
+					char s[64];
+					snprintf(s, sizeof(s), "read 'Int64' type mismatch, tag: %d, headTag: %c, get type: %c.", tag, headTag, headType);
+					throw TarsDecodeMismatch(s);
+				}
+
+			}
+		}
+		else if (tars_unlikely(isRequire))
+		{
+			char s[64];
+			snprintf(s, sizeof(s), "require field not exist, tag: %d, headTag: %d", tag, headTag);
+			throw TarsDecodeRequireNotExist(s);
+		}
+	}
+
 	void read(Float& n, uint8_t tag, bool isRequire = true)
 	{
 		uint8_t headType = 0, headTag = 0;
@@ -2141,6 +2200,11 @@ public:
 			n = tars_htonll(n);
 			TarsWriteInt64TypeBuf(*this, n, (*this)._len);
 		}
+	}
+
+	void write(UInt64 n, uint8_t tag)
+	{
+		write((Int64) n, tag);
 	}
 
 	void write(Float n, uint8_t tag)
