@@ -572,7 +572,7 @@ struct_def
     assert(st);
     if(st->getAllMemberPtr().size() == 0)
     {
-        g_parse->error("struct `" + st->getSid() + "' must have at least one member");
+        // g_parse->error("struct `" + st->getSid() + "' must have at least one member");
     }
 }
 ;
