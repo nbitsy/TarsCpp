@@ -1124,6 +1124,10 @@ string Tars2Cpp::generateH(const StructPtr& pPtr, const string& namespaceId) con
     s << TAB << "{" << endl;
     INC_TAB;
     s << TAB << "return ";
+    if (member.size() == 0)
+    {
+        s << "true";
+    }
     for (size_t j = 0; j < member.size(); j++)
     {
         if (member[j]->getTypePtr()->isArray() || member[j]->getTypePtr()->isPointer()) //数组类型、指针类型
