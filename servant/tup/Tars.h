@@ -1119,7 +1119,8 @@ public:
 
 	void read(UInt8& n, uint8_t tag, bool isRequire = true)
 	{
-		Short i = (Short)n;
+		// Short i = (Short)n;
+		Char i = (Char)n;
 		read(i,tag,isRequire);
 		n = (UInt8)i;
 	}
@@ -1161,7 +1162,8 @@ public:
 
 	void read(UInt16& n, uint8_t tag, bool isRequire = true)
 	{
-		Int32 i = (Int32)n;
+		// Int32 i = (Int32)n;
+		Short i = (Short)n;
 		read(i,tag,isRequire);
 		n = (UInt16)i;
 	}
@@ -1207,7 +1209,8 @@ public:
 
 	void read(UInt32& n, uint8_t tag, bool isRequire = true)
 	{
-		Int64 i = (Int64)n;
+		// Int64 i = (Int64)n;
+		Int32 i = (Int32)n;
 		read(i,tag,isRequire);
 		n = (UInt32)i;
 	}
@@ -1254,6 +1257,14 @@ public:
 			snprintf(s, sizeof(s), "require field not exist, tag: %d, headTag: %d", tag, headTag);
 			throw TarsDecodeRequireNotExist(s);
 		}
+	}
+
+	void read(UInt64& n, uint8_t tag, bool isRequire = true)
+	{
+		// Int64 i = (Int64)n;
+		Int64 i = (Int64)n;
+		read(i,tag,isRequire);
+		n = (UInt64)i;
 	}
 
 	void read(Float& n, uint8_t tag, bool isRequire = true)
@@ -2088,7 +2099,8 @@ public:
 
 	void write(UInt8 n, uint8_t tag)
 	{
-		write((Short) n, tag);
+		// write((Short) n, tag);
+		write((Char)n, tag);
 	}
 
 	void write(Short n, uint8_t tag)
@@ -2107,7 +2119,8 @@ public:
 
 	void write(UInt16 n, uint8_t tag)
 	{
-		write((Int32) n, tag);
+		// write((Int32) n, tag);
+		write((Short)n, tag);
 	}
 
 	void write(Int32 n, uint8_t tag)
@@ -2126,7 +2139,8 @@ public:
 
 	void write(UInt32 n, uint8_t tag)
 	{
-		write((Int64) n, tag);
+		// write((Int64) n, tag);
+		write((Int32)n, tag);
 	}
 
 	void write(Int64 n, uint8_t tag)
@@ -2141,6 +2155,12 @@ public:
 			n = tars_htonll(n);
 			TarsWriteInt64TypeBuf(*this, n, (*this)._len);
 		}
+	}
+
+	void write(UInt64 n, uint8_t tag)
+	{
+		// write((Int64) n, tag);
+		write((Int64)n, tag);
 	}
 
 	void write(Float n, uint8_t tag)

@@ -907,9 +907,9 @@ type_no
 {
     $$ = g_parse->createBuiltin(Builtin::KindByte);
 }
-| TARS_UNSIGNED TARS_BYTE //unsigned char -> short
+| TARS_UNSIGNED TARS_BYTE
 {
-    $$ = g_parse->createBuiltin(Builtin::KindShort,true);
+    $$ = g_parse->createBuiltin(Builtin::KindByte,true);
 }
 | TARS_SHORT
 {
@@ -917,7 +917,7 @@ type_no
 }
 | TARS_UNSIGNED TARS_SHORT
 {
-    $$ = g_parse->createBuiltin(Builtin::KindInt,true);
+    $$ = g_parse->createBuiltin(Builtin::KindShort,true);
 }
 | TARS_INT
 {
@@ -925,11 +925,15 @@ type_no
 }
 | TARS_UNSIGNED TARS_INT
 {
-    $$ = g_parse->createBuiltin(Builtin::KindLong,true);
+    $$ = g_parse->createBuiltin(Builtin::KindInt,true);
 }
 | TARS_LONG
 {
     $$ = g_parse->createBuiltin(Builtin::KindLong);
+}
+| TARS_UNSIGNED TARS_LONG
+{
+    $$ = g_parse->createBuiltin(Builtin::KindLong,true);
 }
 | TARS_FLOAT
 {

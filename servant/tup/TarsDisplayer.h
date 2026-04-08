@@ -114,6 +114,13 @@ public:
         return *this;
     }
 
+    TarsDisplayer& display(UInt64 n, const char * fieldName)
+    {
+        ps(fieldName);
+        _os << n << std::endl;
+        return *this;
+    }
+
     TarsDisplayer& display(Float n, const char * fieldName)
     {
         ps(fieldName);
@@ -260,6 +267,12 @@ public:
     }
 
     TarsDisplayer& displaySimple(Int64 n, bool bSep)
+    {
+        _os << n << (bSep ? "|" : "");
+        return *this;
+    }
+
+    TarsDisplayer& displaySimple(UInt64 n, bool bSep)
     {
         _os << n << (bSep ? "|" : "");
         return *this;

@@ -52,8 +52,10 @@ typedef unsigned int    UInt32;
 
 #if __WORDSIZE == 64
 typedef long    Int64;
+typedef unsigned long    UInt64;
 #else
 typedef long long   Int64;
+typedef unsigned long long    UInt64;
 #endif
 
 #ifndef TARS_MAX_STRING_LENGTH
@@ -152,9 +154,10 @@ template<> struct TarsClass<tars::Float>  { static std::string name() { return "
 template<> struct TarsClass<tars::Double> { static std::string name() { return "double"; } };
 template<> struct TarsClass<tars::Int32>  { static std::string name() { return "int32"; } };
 template<> struct TarsClass<tars::Int64>  { static std::string name() { return "int64"; } };
-template<> struct TarsClass<tars::UInt8>  { static std::string name() { return "short"; } };
-template<> struct TarsClass<tars::UInt16> { static std::string name() { return "int32"; } };
-template<> struct TarsClass<tars::UInt32> { static std::string name() { return "int64"; } };
+template<> struct TarsClass<tars::UInt8>  { static std::string name() { return "uint8"; } };
+template<> struct TarsClass<tars::UInt16> { static std::string name() { return "uint16"; } };
+template<> struct TarsClass<tars::UInt32> { static std::string name() { return "uint32"; } };
+template<> struct TarsClass<tars::UInt64> { static std::string name() { return "uint64"; } };
 template<> struct TarsClass<std::string> { static std::string name() { return "string"; } };
 template<typename T> struct TarsClass<std::vector<T> > { static std::string name() { return std::string("list<") + TarsClass<T>::name() + ">"; } };
 template<typename T, typename U> struct TarsClass<std::map<T, U> > { static std::string name() { return std::string("map<") + TarsClass<T>::name() + "," + TarsClass<U>::name() + ">"; } };
