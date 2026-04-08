@@ -74,7 +74,7 @@ public:
     TarsDisplayer& display(UInt8 n, const char * fieldName)
     {
         ps(fieldName);
-        _os << n << std::endl;
+        _os << (UInt16)n << std::endl;
         return *this;
     }
 
@@ -238,7 +238,7 @@ public:
 
     TarsDisplayer& displaySimple(UInt8 n, bool bSep)
     {
-        _os << n << (bSep ? "|" : "");
+        _os << (UInt16)n << (bSep ? "|" : "");
         return *this;
     }
 
