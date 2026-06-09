@@ -20,7 +20,7 @@
 #include <string>
 #include <string.h>
 
-#define TARS_PACKAGE     "Wup.Tars"
+#define TARS_PACKAGE     "Tup.Tars"
 
 #define TAB g_parse->getTab()
 #define INC_TAB g_parse->incTab()
@@ -81,6 +81,10 @@ string Tars2Cs::toObjStr(const TypePtr &pPtr) const
     if (sType == "short" )  return "short";
     if (sType == "int" )    return "int";
     if (sType == "long" )   return "long";
+    if (sType == "sbyte")   return "sbyte";
+    if (sType == "ushort")  return "ushort";
+    if (sType == "uint")    return "uint";
+    if (sType == "ulong")   return "ulong";
     if (sType == "float" )  return "float";
     if (sType == "double" ) return "double";
 
@@ -118,10 +122,10 @@ string Tars2Cs::tostrBuiltin(const BuiltinPtr &pPtr) const
     switch (pPtr->kind())
     {
         case Builtin::KindBool:     s = "bool";  break;
-        case Builtin::KindByte:     s = "byte";     break;
-        case Builtin::KindShort:    s = "short";    break;
-        case Builtin::KindInt:      s = "int";      break;
-        case Builtin::KindLong:     s = "long";     break;
+        case Builtin::KindByte:     s = pPtr->isUnsigned() ? "byte" : "sbyte";     break;
+        case Builtin::KindShort:    s = pPtr->isUnsigned() ? "ushort" : "short";    break;
+        case Builtin::KindInt:      s = pPtr->isUnsigned() ? "uint" : "int";      break;
+        case Builtin::KindLong:     s = pPtr->isUnsigned() ? "ulong" : "long";     break;
         case Builtin::KindFloat:    s = "float";    break;
         case Builtin::KindDouble:   s = "double";   break;
         case Builtin::KindString:   s = "string";   break;
