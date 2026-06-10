@@ -164,6 +164,7 @@ public:
         KindVoid,
         KindBool,
         KindByte,
+        KindBytes,
         KindShort,
         KindInt,
         KindLong,

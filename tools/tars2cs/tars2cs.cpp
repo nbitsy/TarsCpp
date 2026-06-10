@@ -36,6 +36,7 @@ string Tars2Cs::toTypeInit(const TypePtr &pPtr) const
         {
             case Builtin::KindBool:     return "false;";
             case Builtin::KindByte:     return "0;";
+            case Builtin::KindBytes:    return "null;";
             case Builtin::KindShort:    return "0;";
             case Builtin::KindInt:      return "0;";
             case Builtin::KindLong:     return "0L;";
@@ -78,6 +79,7 @@ string Tars2Cs::toObjStr(const TypePtr &pPtr) const
 
     if (sType == "bool") return "bool";
     if (sType == "byte")    return "byte";
+    if (sType == "byte[]")  return "byte[]";
     if (sType == "short" )  return "short";
     if (sType == "int" )    return "int";
     if (sType == "long" )   return "long";
@@ -123,6 +125,7 @@ string Tars2Cs::tostrBuiltin(const BuiltinPtr &pPtr) const
     {
         case Builtin::KindBool:     s = "bool";  break;
         case Builtin::KindByte:     s = pPtr->isUnsigned() ? "byte" : "sbyte";     break;
+        case Builtin::KindBytes:    s = "byte[]";     break;
         case Builtin::KindShort:    s = pPtr->isUnsigned() ? "ushort" : "short";    break;
         case Builtin::KindInt:      s = pPtr->isUnsigned() ? "uint" : "int";      break;
         case Builtin::KindLong:     s = pPtr->isUnsigned() ? "ulong" : "long";     break;
@@ -199,6 +202,10 @@ string Tars2Cs::generateCs(const StructPtr &pPtr, const NamespacePtr &nPtr) cons
             {
                 sDefault = tars::TC_Common::replace(member[i]->def(), "\"", "\\\"");
                 sDefault = " = \"" + sDefault + "\"";
+            }
+            else if (bPtr && bPtr->kind() == Builtin::KindBytes)
+            {
+                sDefault = " = null";
             }
             else
             {

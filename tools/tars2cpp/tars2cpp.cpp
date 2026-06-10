@@ -65,7 +65,7 @@ string Tars2Cpp::writeToXml(const TypeIdPtr &pPtr) const
 		if (!_checkDefault || pPtr->isRequire() || (!pPtr->hasDefault() && !mPtr && !vPtr))
 		{
             BuiltinPtr bPtr = BuiltinPtr::dynamicCast(pPtr->getTypePtr());
-            if (pPtr->getTypePtr()->isSimple() || (bPtr && bPtr->kind() == Builtin::KindString))
+            if (pPtr->getTypePtr()->isSimple() || (bPtr && (bPtr->kind() == Builtin::KindString || bPtr->kind() == Builtin::KindBytes)))
             {
                 s << TAB << "p->value[\"" << pPtr->getId() << "\"] = " + _namespace + "::XmlOutput::writeXml(" << pPtr->getId() << ", _cdata_format);" << endl;
             }
@@ -78,7 +78,7 @@ string Tars2Cpp::writeToXml(const TypeIdPtr &pPtr) const
 		{
 			string sDefault = pPtr->def();
             BuiltinPtr bPtr = BuiltinPtr::dynamicCast(pPtr->getTypePtr());
-			if (bPtr && bPtr->kind() == Builtin::KindString)
+			if (bPtr && (bPtr->kind() == Builtin::KindString || bPtr->kind() == Builtin::KindBytes))
 			{
 				sDefault = "\"" + TC_Common::replace(pPtr->def(), "\"", "\\\"") + "\"";
 			}
@@ -260,7 +260,7 @@ string Tars2Cpp::writeToJson(const TypeIdPtr& pPtr) const
             string sDefault = pPtr->def();
 
             BuiltinPtr bPtr = BuiltinPtr::dynamicCast(pPtr->getTypePtr());
-            if (bPtr && bPtr->kind() == Builtin::KindString)
+            if (bPtr && (bPtr->kind() == Builtin::KindString || bPtr->kind() == Builtin::KindBytes))
             {
                 sDefault = "\"" + tars::TC_Common::replace(pPtr->def(), "\"", "\\\"") + "\"";
             }
@@ -355,7 +355,7 @@ string Tars2Cpp::writeTo(const TypeIdPtr& pPtr) const
             string sDefault = pPtr->def();
 
             BuiltinPtr bPtr = BuiltinPtr::dynamicCast(pPtr->getTypePtr());
-            if (bPtr && bPtr->kind() == Builtin::KindString)
+            if (bPtr && (bPtr->kind() == Builtin::KindString || bPtr->kind() == Builtin::KindBytes))
             {
                 sDefault = "\"" + tars::TC_Common::replace(pPtr->def(), "\"", "\\\"") + "\"";
             }
@@ -609,6 +609,9 @@ string Tars2Cpp::tostrBuiltin(const BuiltinPtr& pPtr) const
         else
             s = "std::string";//string a;
         break;
+    case Builtin::KindBytes:
+        s = "std::string";
+        break;
     case Builtin::KindVector:
         s = "std::vector";
         break;
@@ -750,7 +753,7 @@ string Tars2Cpp::generateH(const StructPtr& pPtr, const string& namespaceId) con
 
             BuiltinPtr bPtr  = BuiltinPtr::dynamicCast(member[j]->getTypePtr());
             //string值要转义
-            if (bPtr && bPtr->kind() == Builtin::KindString)
+            if (bPtr && (bPtr->kind() == Builtin::KindString || bPtr->kind() == Builtin::KindBytes))
             {
                 string tmp = tars::TC_Common::replace(member[j]->def(), "\"", "\\\"");
                 s << member[j]->getId() << "(\"" << tmp << "\")";
@@ -870,7 +873,7 @@ string Tars2Cpp::generateH(const StructPtr& pPtr, const string& namespaceId) con
         {
             BuiltinPtr bPtr  = BuiltinPtr::dynamicCast(member[j]->getTypePtr());
             //string值要转义
-            if (bPtr && bPtr->kind() == Builtin::KindString)
+            if (bPtr && (bPtr->kind() == Builtin::KindString || bPtr->kind() == Builtin::KindBytes))
             {
                 string tmp = tars::TC_Common::replace(member[j]->def(), "\"", "\\\"");
                 s << TAB << member[j]->getId() << " = \"" << tmp << "\";" << endl;

@@ -27,6 +27,7 @@ const char* Builtin::builtinTable[] =
         "void",
         "bool",
         "byte",
+        "bytes",
         "short",
         "int",
         "long",
@@ -79,6 +80,7 @@ string Builtin::def() const
     case Builtin::KindDouble:
         return "0";
     case Builtin::KindString:
+    case Builtin::KindBytes:
         return "";
     default:
         assert(false);

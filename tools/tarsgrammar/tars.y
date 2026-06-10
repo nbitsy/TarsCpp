@@ -36,6 +36,7 @@ using namespace std;
 %token TARS_STRUCT
 %token TARS_BOOL
 %token TARS_BYTE
+%token TARS_BYTES
 %token TARS_SHORT
 %token TARS_INT
 %token TARS_DOUBLE
@@ -907,6 +908,10 @@ type_no
 {
     $$ = g_parse->createBuiltin(Builtin::KindByte);
 }
+| TARS_BYTES
+{
+    $$ = g_parse->createBuiltin(Builtin::KindBytes);
+}
 | TARS_UNSIGNED TARS_BYTE
 {
     $$ = g_parse->createBuiltin(Builtin::KindByte,true);
@@ -1039,6 +1044,9 @@ keyword
 {
 }
 | TARS_BYTE
+{
+}
+| TARS_BYTES
 {
 }
 | TARS_SHORT

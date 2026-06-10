@@ -294,6 +294,7 @@ void TarsParse::initScanner()
     _keywordMap["struct"]   = TARS_STRUCT;
     _keywordMap["bool"]     = TARS_BOOL;
     _keywordMap["byte"]     = TARS_BYTE;
+    _keywordMap["bytes"]    = TARS_BYTES;
     _keywordMap["short"]    = TARS_SHORT;
     _keywordMap["int"]      = TARS_INT;
     _keywordMap["double"]   = TARS_DOUBLE;
