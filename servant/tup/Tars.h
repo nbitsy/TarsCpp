@@ -1622,6 +1622,73 @@ public:
 		}
 	}
 
+	void readBytes(std::string& s, uint8_t tag, bool isRequire = true)
+	{
+		uint8_t headType = 0, headTag = 0;
+		bool skipFlag = false;
+		TarsSkipToTag(skipFlag, tag, headType, headTag);
+		if (tars_likely(skipFlag))
+		{
+			switch(headType)
+			{
+				case TarsHeadeSimpleList:
+				{
+					uint8_t hheadType, hheadTag;
+					readFromHead(*this, hheadType, hheadTag);
+					if (tars_unlikely(hheadType != TarsHeadeChar))
+					{
+						char s[128];
+						snprintf(s, sizeof(s), "type mismatch, tag: %d, type: %d, %d, %d", tag, headType, hheadType, hheadTag);
+						throw TarsDecodeMismatch(s);
+					}
+					UInt32 size = 0;
+					read(size, 0);
+					if (tars_unlikely(size > this->size()))
+					{
+						char s[128];
+						snprintf(s, sizeof(s), "invalid size, tag: %d, type: %d, %d, size: %d", tag, headType, hheadType, size);
+						throw TarsDecodeInvalidValue(s);
+					}
+
+					TarsReadStringBuf(*this, s, size);
+				}
+					break;
+				case TarsHeadeList:
+				{
+					UInt32 size = 0;
+					read(size, 0);
+					if (tars_unlikely(size > this->size()))
+					{
+						char s[128];
+						snprintf(s, sizeof(s), "invalid size, tag: %d, type: %d, size: %d", tag, headType, size);
+						throw TarsDecodeInvalidValue(s);
+					}
+					s.clear();
+					s.reserve(size);
+					for (UInt32 i = 0; i < size; ++i)
+					{
+						Char c = 0;
+						read(c, 0);
+						s.push_back(c);
+					}
+				}
+					break;
+				default:
+				{
+					char s[128];
+					snprintf(s, sizeof(s), "type mismatch, tag: %d, type: %d", tag, headType);
+					throw TarsDecodeMismatch(s);
+				}
+			}
+		}
+		else if (tars_unlikely(isRequire))
+		{
+			char s[128];
+			snprintf(s, sizeof(s), "require field not exist, tag: %d, headTag: %d", tag, headTag);
+			throw TarsDecodeRequireNotExist(s);
+		}
+	}
+
 	template<typename Alloc>
 	void read(std::vector<Char, Alloc>& v, uint8_t tag, bool isRequire = true)
 	{

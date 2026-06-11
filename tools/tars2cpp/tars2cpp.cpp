@@ -329,6 +329,9 @@ string Tars2Cpp::readFromJson(const TypeIdPtr& pPtr, bool bIsRequire) const
 string Tars2Cpp::writeTo(const TypeIdPtr& pPtr) const
 {
     ostringstream s;
+    BuiltinPtr bPtr = BuiltinPtr::dynamicCast(pPtr->getTypePtr());
+    bool bKindBytes = bPtr && bPtr->kind() == Builtin::KindBytes;
+
     if (EnumPtr::dynamicCast(pPtr->getTypePtr()))
     {
         s << TAB << "_os.write((" + _namespace + "::Int32)" << pPtr->getId() << ", " << pPtr->getTag() << ");" << endl;
@@ -348,13 +351,19 @@ string Tars2Cpp::writeTo(const TypeIdPtr& pPtr) const
 
         if (!_checkDefault || pPtr->isRequire() || (!pPtr->hasDefault() && !mPtr && !vPtr))
         {
-            s << TAB << "_os.write(" << pPtr->getId() << ", " << pPtr->getTag() << ");" << endl;
+            if (bKindBytes)
+            {
+                s << TAB << "_os.write((const " << _namespace << "::Char *)" << pPtr->getId() << ".data(), (" << _namespace << "::UInt32)" << pPtr->getId() << ".size(), " << pPtr->getTag() << ");" << endl;
+            }
+            else
+            {
+                s << TAB << "_os.write(" << pPtr->getId() << ", " << pPtr->getTag() << ");" << endl;
+            }
         }
         else
         {
             string sDefault = pPtr->def();
 
-            BuiltinPtr bPtr = BuiltinPtr::dynamicCast(pPtr->getTypePtr());
             if (bPtr && (bPtr->kind() == Builtin::KindString || bPtr->kind() == Builtin::KindBytes))
             {
                 sDefault = "\"" + tars::TC_Common::replace(pPtr->def(), "\"", "\\\"") + "\"";
@@ -390,7 +399,14 @@ string Tars2Cpp::writeTo(const TypeIdPtr& pPtr) const
 
             s << TAB << "{" << endl;
             INC_TAB;
-            s << TAB << "_os.write(" << pPtr->getId() << ", " << pPtr->getTag() << ");" << endl;
+            if (bKindBytes)
+            {
+                s << TAB << "_os.write((const " << _namespace << "::Char *)" << pPtr->getId() << ".data(), (" << _namespace << "::UInt32)" << pPtr->getId() << ".size(), " << pPtr->getTag() << ");" << endl;
+            }
+            else
+            {
+                s << TAB << "_os.write(" << pPtr->getId() << ", " << pPtr->getTag() << ");" << endl;
+            }
             DEL_TAB;
             s << TAB << "}" << endl;
         }
@@ -402,6 +418,10 @@ string Tars2Cpp::writeTo(const TypeIdPtr& pPtr) const
 string Tars2Cpp::readFrom(const TypeIdPtr& pPtr, bool bIsRequire) const
 {
     ostringstream s;
+    BuiltinPtr bPtr = BuiltinPtr::dynamicCast(pPtr->getTypePtr());
+    bool bKindBytes = bPtr && bPtr->kind() == Builtin::KindBytes;
+    string sRequire = ((pPtr->isRequire() && bIsRequire) ? "true" : "false");
+
     if (EnumPtr::dynamicCast(pPtr->getTypePtr()))
     {
         //枚举强制类型转换在O2编译选项情况下会告警
@@ -422,10 +442,16 @@ string Tars2Cpp::readFrom(const TypeIdPtr& pPtr, bool bIsRequire) const
     }
     else
     {
+        if (bKindBytes)
+        {
+            s << TAB << "_is.readBytes(" << pPtr->getId() << ", " << pPtr->getTag() << ", " << sRequire << ");" << endl;
+            return s.str();
+        }
+
         s << TAB << "_is.read(" << pPtr->getId();
     }
 
-    s << ", " << pPtr->getTag() << ", " << ((pPtr->isRequire() && bIsRequire) ? "true" : "false") << ");" << endl;
+    s << ", " << pPtr->getTag() << ", " << sRequire << ");" << endl;
 
     if (EnumPtr::dynamicCast(pPtr->getTypePtr()))
     {
@@ -604,13 +630,11 @@ string Tars2Cpp::tostrBuiltin(const BuiltinPtr& pPtr) const
         s = _namespace + "::Double";
         break;
     case Builtin::KindString:
+    case Builtin::KindBytes:
         if(pPtr->isArray())
             s = _namespace+ "::Char"; //char a [8];
         else
-            s = "std::string";//string a;
-        break;
-    case Builtin::KindBytes:
-        s = "std::string";
+            s = "std::string";
         break;
     case Builtin::KindVector:
         s = "std::vector";
