@@ -79,19 +79,16 @@ string Tars2Cs::toObjStr(const TypePtr &pPtr) const
 
     if (sType == "bool") return "bool";
     if (sType == "byte")    return "byte";
-    if (sType == "byte[]")  return "byte[]";
+    if (sType == "sbyte")   return "sbyte";
     if (sType == "short" )  return "short";
     if (sType == "ushort" ) return "ushort";
     if (sType == "int" )    return "int";
     if (sType == "uint" )   return "uint";
     if (sType == "long" )   return "long";
     if (sType == "ulong" )  return "ulong";
-    if (sType == "sbyte")   return "sbyte";
-    if (sType == "ushort")  return "ushort";
-    if (sType == "uint")    return "uint";
-    if (sType == "ulong")   return "ulong";
     if (sType == "float" )  return "float";
     if (sType == "double" ) return "double";
+    if (sType == "byte[]")  return "byte[]";
 
     return sType;
 }

@@ -22,40 +22,39 @@
 #include <string>
 
 /**
- * ����tars����java�ļ�
- * �����ṹ�ı�����Լ�����Proxy��Servant
+ * 根据tars生成c#文件
+ * 包括结构的编解码以及生成Proxy和Servant
  */
 class Tars2Cs
 {
 public:
     /**
-     * ���ô������ɵĸ�Ŀ¼
-     * @param dir
+     * 设置生成文件的目录
+     *
      */
     void setBaseDir(const string &dir);
 
     /**
-     * ���ð�ǰ׺
+     * 设置前缀
      * @param prefix
      */
     void setBasePackage(const string &prefix);
 
     /**
-     * �����Ƿ���Ҫ����˴���
+     * 设置是否生成Servant
      */
     void setWithServant(bool bWithServant) { _bWithServant = bWithServant;}
 
     /**
-     * ����
+     * 生成文件
      * @param file
-     * @param isFramework �Ƿ��ǿ��
      */
     void createFile(const string &file);
 
 protected:
     /**
-     * ���������ռ��ȡ�ļ�·��
-     * @param ns �����ռ�
+     * 获取命名空间的文件路径
+     * @param ns 命名空间
      *
      * @return string
      */
@@ -65,11 +64,11 @@ protected:
     string _baseDir;
     bool   _bWithServant;
 
-    //�����Ǳ�����Դ������
+    //下面是编解码的源码生成
 protected:
 
     /**
-     * ����ĳ���͵Ľ���Դ��
+     * 生成xml
      * @param pPtr
      *
      * @return string
@@ -77,7 +76,7 @@ protected:
     string writeTo(const TypeIdPtr &pPtr) const;
 
     /**
-     * ����ĳ���͵ı���Դ��
+     * 生成xml
      * @param pPtr
      *
      * @return string
@@ -92,11 +91,11 @@ protected:
      */
     string display(const TypeIdPtr &pPtr) const;
 
-    //����������������Դ������
+    //下面是类型描述的源码生成
 protected:
 
     /*
-     * ����ĳ���͵ĳ�ʼ���ַ���
+     * 生成某类型的初始化字符串
      * @param pPtr
      *
      * @return string
@@ -104,7 +103,7 @@ protected:
     string toTypeInit(const TypePtr &pPtr) const;
 
     /**
-     * ����ĳ���͵Ķ�Ӧ������ַ�������Դ��
+     * 生成某类型的对应对象的字符串描述源码
      * @param pPtr
      *
      * @return string
@@ -112,12 +111,12 @@ protected:
     string toObjStr(const TypePtr &pPtr) const;
 
     /**
-     * �ж��Ƿ��Ƕ�������
+     * 判断是否是对象类型
      */
     bool isObjType(const TypePtr &pPtr) const;
 
     /**
-     * ����ĳ���͵��ַ�������Դ��
+     * 生成某类型的字符串描述源码
      * @param pPtr
      *
      * @return string
@@ -125,14 +124,14 @@ protected:
     string tostr(const TypePtr &pPtr) const;
 
     /**
-     * �����ڽ����͵��ַ���Դ��
+     * 生成内建类型的字符串源码
      * @param pPtr
      *
      * @return string
      */
     string tostrBuiltin(const BuiltinPtr &pPtr) const;
     /**
-     * ����vector���ַ�������
+     * 生成vector的字符串描述
      * @param pPtr
      *
      * @return string
@@ -140,7 +139,7 @@ protected:
     string tostrVector(const VectorPtr &pPtr) const;
 
     /**
-     * ����map���ַ�������
+     * 生成map的字符串描述
      * @param pPtr
      *
      * @return string
@@ -148,7 +147,7 @@ protected:
     string tostrMap(const MapPtr &pPtr, bool bNew = false) const;
 
     /**
-     * ����ĳ�ֽṹ�ķ�������
+     * 生成某种结构的符串描述
      * @param pPtr
      *
      * @return string
@@ -156,7 +155,7 @@ protected:
     string tostrStruct(const StructPtr &pPtr) const;
 
     /**
-     * ����ĳ��ö�ٵķ�������
+     * 生成某种枚举的符串描述
      * @param pPtr
      *
      * @return string
@@ -164,7 +163,7 @@ protected:
     string tostrEnum(const EnumPtr &pPtr) const;
 
     /**
-     * �������ͱ����Ľ���Դ��
+     * 生成某类型的解码源码
      * @param pPtr
      *
      * @return string
@@ -172,17 +171,17 @@ protected:
     string decode(const TypeIdPtr &pPtr) const;
 
     /**
-     * �������ͱ����ı���Դ��
+     * 生成某类型的编码源码
      * @param pPtr
      *
      * @return string
      */
     string encode(const TypeIdPtr &pPtr) const;
 
-    //������h��java�ļ��ľ�������
+    //下面是生成头文件的源码生成
 protected:
     /**
-     * ���ɽṹ��java�ļ�����
+     * 生成结构的头文件源码
      * @param pPtr
      *
      * @return string
@@ -190,7 +189,7 @@ protected:
     string generateCs(const StructPtr &pPtr, const NamespacePtr &nPtr) const;
 
     /**
-     * ����������javaԴ��
+     * 生成容器头文件源码
      * @param pPtr
      *
      * @return string
@@ -198,7 +197,7 @@ protected:
     string generateCs(const ContainerPtr &pPtr) const;
 
     /**
-     * ���ɲ���������java�ļ�����
+     * 生成参数头文件源码
      * @param pPtr
      *
      * @return string
@@ -206,7 +205,7 @@ protected:
     string generateCs(const ParamDeclPtr &pPtr) const;
 
     /**
-     * ����ö�ٵ�ͷ�ļ�Դ��
+     * 生成枚举头文件源码
      * @param pPtr
      *
      * @return string
@@ -214,7 +213,7 @@ protected:
     string generateCs(const EnumPtr &pPtr, const NamespacePtr &nPtr) const;
 
     /**
-     * ���ɳ���javaԴ��
+     * 生成常量头文件源码
      * @param pPtr
      * 
      * @return string
@@ -223,7 +222,7 @@ protected:
 
     void generateCs(const vector<EnumPtr> &es,const vector<ConstPtr> &cs,const NamespacePtr &nPtr) const;
     /**
-     * �������ֿռ�java�ļ�Դ��
+     * 生成命名空间头文件源码
      * @param pPtr
      *
      * @return string
@@ -231,7 +230,7 @@ protected:
     void generateCs(const NamespacePtr &pPtr) const;
 
     /**
-     * ����ÿ��tars�ļ���java�ļ�Դ��
+     * 生成每个tars文件的源码
      * @param pPtr
      *
      * @return string
